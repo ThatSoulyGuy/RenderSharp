@@ -6,17 +6,13 @@ namespace RenderStar.ECS
     public class GameObject
     {
         public string Name { get; set; } = string.Empty;
-
         public bool IsActive { get; set; } = true;
-
 
         private Dictionary<Type, Component> Components { get; } = [];
 
         public void AddComponent(Component component)
         {
             Type type = component.GetType();
-
-            List<RequireComponentAttribute>? requiredComponents = type.GetCustomAttributes(typeof(RequireComponentAttribute), true).Cast<RequireComponentAttribute>().ToList();
 
             foreach (RequireComponentAttribute requiredComponent in requiredComponents)
             {
@@ -33,7 +29,6 @@ namespace RenderStar.ECS
         public T GetComponent<T>() where T : Component
         {
             Type type = typeof(T);
-
             if (Components.TryGetValue(type, out Component? component))
                 return (component as T)!;
             
@@ -51,10 +46,6 @@ namespace RenderStar.ECS
 
             Components[type] = component;
         }
-
-        public bool HasComponent(Type type)
-        {
-            return Components.ContainsKey(type);
         }
 
         public bool HasComponent<T>() where T : Component
