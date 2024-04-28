@@ -64,6 +64,12 @@ namespace RenderStar.Render
         }
     }
 
+    [StructLayout(LayoutKind.Sequential, Pack = 16)]
+    public struct DefaultBufferType
+    {
+        public Matrix ModelMatrix;
+    }
+
     [RequireComponent(typeof(Shader))]
     public class Mesh : Component
     {
@@ -127,6 +133,9 @@ namespace RenderStar.Render
                     AddSampler("samplerState", 0, samplerDescription);
                 }
             }
+
+            if (!ConstantBuffers.ContainsKey("MatrixBuffer"))
+                AddConstantBuffer<DefaultBufferType>("MatrixBuffer", 0, Utilities.SizeOf<DefaultBufferType>());
         }
 
         public virtual void AddSampler(string name, int slot, SamplerStateDescription samplerDescription)
@@ -159,6 +168,11 @@ namespace RenderStar.Render
             Renderer.Context.InputAssembler.SetVertexBuffers(0, VertexBufferBinding);
 
             Renderer.Context.InputAssembler.SetIndexBuffer(IndexBuffer, Format.R32_UInt, 0);
+
+            UpdateConstantBuffer<DefaultBufferType>("MatrixBuffer", new()
+            {
+                ModelMatrix = Matrix.Transpose(Transform.WorldMatrix)
+            });
 
             foreach (string name in ConstantBuffers.Keys)
                 GameObject.GetComponent<Shader>().SetConstantBuffer(name, ShaderStage.Vertex, ConstantBuffers[name]);

@@ -7,12 +7,17 @@ namespace RenderStar.ECS
     {
         public string Name { get; set; } = string.Empty;
         public bool IsActive { get; set; } = true;
+        public GameObject Parent { get; private set; } = null!;
+        public List<GameObject> Children { get; } = [];
+
+        public Transform Transform => GetComponent<Transform>();
 
         private Dictionary<Type, Component> Components { get; } = [];
 
         public void AddComponent(Component component)
         {
             Type type = component.GetType();
+            List<RequireComponentAttribute> requiredComponents = type.GetCustomAttributes(typeof(RequireComponentAttribute), true).Cast<RequireComponentAttribute>().ToList();
 
             foreach (RequireComponentAttribute requiredComponent in requiredComponents)
             {
@@ -21,9 +26,18 @@ namespace RenderStar.ECS
             }
 
             Components[type] = component;
+            component.GameObject = this;
+            component.Initialize();
+        }
 
-            Components[type].GameObject = this;
-            Components[type].Initialize();
+        public bool HasComponent(Type type)
+        {
+            return Components.ContainsKey(type);
+        }
+
+        public bool HasComponent<T>() where T : Component
+        {
+            return Components.ContainsKey(typeof(T));
         }
 
         public T GetComponent<T>() where T : Component
@@ -31,7 +45,7 @@ namespace RenderStar.ECS
             Type type = typeof(T);
             if (Components.TryGetValue(type, out Component? component))
                 return (component as T)!;
-            
+
             return null!;
         }
 
@@ -40,17 +54,19 @@ namespace RenderStar.ECS
             return Components.Remove(typeof(T));
         }
 
-        public void SetComponent<T>(T component) where T : Component
+        public void AddChild(GameObject child)
         {
-            Type type = typeof(T);
-
-            Components[type] = component;
+            if (!Children.Contains(child))
+            {
+                Children.Add(child);
+                child.Parent = this;
+            }
         }
-        }
 
-        public bool HasComponent<T>() where T : Component
+        public void RemoveChild(GameObject child)
         {
-            return Components.ContainsKey(typeof(T));
+            if (Children.Remove(child))
+                child.Parent = null!;
         }
 
         public void Update()
@@ -60,6 +76,9 @@ namespace RenderStar.ECS
 
             foreach (Component component in Components.Values)
                 component.Update();
+
+            foreach (GameObject child in Children)
+                child.Update();
         }
 
         public void Render()
@@ -69,14 +88,22 @@ namespace RenderStar.ECS
 
             foreach (Component component in Components.Values)
                 component.Render();
+
+            foreach (GameObject child in Children)
+                child.Render();
         }
 
         public void CleanUp()
         {
             foreach (Component component in Components.Values)
                 component.CleanUp();
-            
+
             Components.Clear();
+
+            foreach (GameObject child in Children)
+                child.CleanUp();
+
+            Children.Clear();
         }
     }
 
