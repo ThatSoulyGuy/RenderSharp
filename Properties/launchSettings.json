@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "RenderStar": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Users\\bkmcm\\Documents\\VisualStudio\\Projects\\RenderStar",
+      "nativeDebugging": true
+    }
+  }
+}
