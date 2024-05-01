@@ -23,9 +23,6 @@ namespace RenderStar.Render
                 FarPlane = farPlane
             };
 
-            camera.GameObject.GetComponent<Transform>().LocalPosition = position;
-            camera.GameObject.GetComponent<Transform>().LocalRotation = rotation;
-
             return camera;
         }
     }

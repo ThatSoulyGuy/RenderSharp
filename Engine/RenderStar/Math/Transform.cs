@@ -48,8 +48,6 @@ namespace RenderStar.Math
             }
         }
 
-        public static Vector3 WorldUp => Vector3.UnitY;
-
         private Transform ParentTransform => GameObject.Parent?.GetComponent<Transform>()!;
 
         public void Translate(Vector3 translation)
