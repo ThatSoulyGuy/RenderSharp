@@ -11,10 +11,12 @@ namespace RenderStar.Render
         public float NearPlane { get; private set; }
         public float FarPlane { get; private set; }
 
-        public Matrix ViewMatrix => Matrix.LookAtLH(Transform.LocalPosition, Transform.LocalPosition + Transform.Forward, Transform.WorldUp);
+        public Matrix ViewMatrix => Matrix.LookAtLH(Transform.WorldPosition, Transform.WorldPosition + Transform.Forward, Transform.Up);
         public Matrix ProjectionMatrix => Matrix.PerspectiveFovLH(MathHelper.DegreesToRadians(FieldOfView), Renderer.AspectRatio, NearPlane, FarPlane);
 
-        public static Camera Create(Vector3 position, Vector3 rotation, float fieldOfView = 45.0f, float nearPlane = 0.01f, float farPlane = 500.0f)
+        private Camera() { }
+
+        public static Camera Create(float fieldOfView = 45.0f, float nearPlane = 0.01f, float farPlane = 500.0f)
         {    
             Camera camera = new()
             {

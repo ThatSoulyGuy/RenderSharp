@@ -1,4 +1,5 @@
 ﻿using RenderStar.Math;
+using RenderStar.Render;
 using SharpDX;
 
 namespace RenderStar.ECS
@@ -49,6 +50,17 @@ namespace RenderStar.ECS
             return null!;
         }
 
+        public T GetComponentInChildren<T>() where T : Component
+        {
+            foreach (GameObject child in Children)
+            {
+                if (child.HasComponent<T>())
+                    return child.GetComponent<T>();
+            }
+
+            return null!;
+        }
+
         public bool RemoveComponent<T>() where T : Component
         {
             return Components.Remove(typeof(T));
@@ -81,16 +93,16 @@ namespace RenderStar.ECS
                 child.Update();
         }
 
-        public void Render()
+        public void Render(Camera camera)
         {
             if (!IsActive)
                 return;
 
             foreach (Component component in Components.Values)
-                component.Render();
+                component.Render(camera);
 
             foreach (GameObject child in Children)
-                child.Render();
+                child.Render(camera);
         }
 
         public void CleanUp()
@@ -116,7 +128,7 @@ namespace RenderStar.ECS
 
         public virtual void Update() { }
 
-        public virtual void Render() { }
+        public virtual void Render(Camera camera) { }
 
         public virtual void CleanUp() { }
     }
@@ -184,10 +196,10 @@ namespace RenderStar.ECS
                 gameObject.Update();
         }
 
-        public static void Render()
+        public static void Render(Camera camera)
         {
             foreach (GameObject gameObject in RegisteredGameObjects.Values)
-                gameObject.Render();
+                gameObject.Render(camera);
         }
 
         public static void Remove(GameObject gameObject)

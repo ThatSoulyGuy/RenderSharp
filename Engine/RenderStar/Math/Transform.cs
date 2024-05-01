@@ -6,9 +6,38 @@ namespace RenderStar.Math
 {
     public class Transform : Component
     {
-        public Vector3 LocalPosition { get; set; }
-        public Vector3 LocalRotation { get; set; }
-        public Vector3 LocalScale { get; set; } = Vector3.One;
+        private Vector3 localPosition;
+        private Vector3 localRotation;
+        private Vector3 localScale = Vector3.One;
+        private Matrix worldMatrix;
+        private bool isDirty = true;
+
+        public Vector3 LocalPosition
+        {
+            get => localPosition;
+            set { localPosition = value; MarkDirty(); }
+        }
+
+        public Vector3 LocalRotation
+        {
+            get => localRotation;
+            set { localRotation = value; MarkDirty(); }
+        }
+
+        public Vector3 LocalScale
+        {
+            get => localScale;
+            set { localScale = value; MarkDirty(); }
+        }
+
+        public Vector3 WorldPosition
+        {
+            get
+            {
+                UpdateWorldMatrixIfNeeded();
+                return worldMatrix.TranslationVector;
+            }
+        }
 
         public Vector3 Forward
         {
@@ -25,26 +54,12 @@ namespace RenderStar.Math
             get => Vector3.TransformNormal(new Vector3(0, 1, 0), WorldMatrix);
         }
 
-        public Vector3 WorldPosition
-        {
-            get
-            {
-                return ParentTransform != null ? Vector3.TransformCoordinate(LocalPosition, ParentTransform.WorldMatrix) : LocalPosition;
-            }
-        }
-
         public Matrix WorldMatrix
         {
             get
             {
-                Matrix rotationMatrix = Matrix.RotationX(MathHelper.DegreesToRadians(LocalRotation.X)) *
-                                     Matrix.RotationY(MathHelper.DegreesToRadians(LocalRotation.Y)) *
-                                     Matrix.RotationZ(MathHelper.DegreesToRadians(LocalRotation.Z));
-
-                Matrix scaleMatrix = Matrix.Scaling(LocalScale);
-                Matrix translationMatrix = Matrix.Translation(WorldPosition);
-
-                return scaleMatrix * rotationMatrix * translationMatrix;
+                UpdateWorldMatrixIfNeeded();
+                return worldMatrix;
             }
         }
 
@@ -58,11 +73,64 @@ namespace RenderStar.Math
         public void Rotate(Vector3 rotation)
         {
             LocalRotation += rotation;
+            WrapAngles();
         }
 
         public void ScaleBy(Vector3 scale)
         {
             LocalScale += scale;
+        }
+
+        private void MarkDirty()
+        {
+            if (!isDirty)
+            {
+                isDirty = true;
+                foreach (var child in GameObject.Children)
+                {
+                    child.Transform.MarkDirty();
+                }
+            }
+        }
+
+        private void UpdateWorldMatrixIfNeeded()
+        {
+            if (isDirty)
+            {
+                RecalculateWorldMatrix();
+                isDirty = false;
+            }
+        }
+
+        private void RecalculateWorldMatrix()
+        {
+            var rotationMatrix = Matrix.RotationYawPitchRoll(
+                MathHelper.DegreesToRadians(LocalRotation.Y),
+                MathHelper.DegreesToRadians(LocalRotation.X),
+                MathHelper.DegreesToRadians(LocalRotation.Z));
+
+            var scaleMatrix = Matrix.Scaling(LocalScale);
+            var translationMatrix = Matrix.Translation(LocalPosition);
+
+            worldMatrix = scaleMatrix * rotationMatrix * translationMatrix;
+
+            if (ParentTransform != null)
+            {
+                worldMatrix *= ParentTransform.WorldMatrix;
+            }
+        }
+
+        private void WrapAngles()
+        {
+            LocalRotation = new Vector3(WrapAngle(LocalRotation.X), WrapAngle(LocalRotation.Y), WrapAngle(LocalRotation.Z));
+        }
+
+        private static float WrapAngle(float angle)
+        {
+            angle %= 360;
+            if (angle < 0)
+                angle += 360;
+            return angle;
         }
 
         public static Transform Create(Vector3 position, Vector3 rotation, Vector3 scale)

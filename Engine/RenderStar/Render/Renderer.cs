@@ -13,16 +13,22 @@ namespace RenderStar.Render
         public static SwapChain SwapChain { get; private set; } = null!;
         public static DeviceContext Context { get; private set; } = null!;
 
-        public static float AspectRatio => SwapChain.Description.ModeDescription.Width / (float)SwapChain.Description.ModeDescription.Height;
+        public static float AspectRatio => ClientSize.X / ClientSize.Y;
 
-        public static Vector2 ClientSize => new(SwapChain.Description.ModeDescription.Width, SwapChain.Description.ModeDescription.Height);
+        public static Vector2 ClientSize => new(Form.ClientSize.Width, Form.ClientSize.Height);
 
         public static Vector3 WindowColor { get; set; } = new(0.0f, 0.45f, 0.75f);
 
+        public static Camera RenderCamera { get; set; } = null!;
+
         private static RenderTargetView RenderTargetView { get; set; } = null!;
+
+        private static Form Form { get; set; } = null!;
 
         public static void Initialize(Form form)
         {
+            Form = form;
+
             SwapChainDescription swapChainDescription = new()
             {
                 BufferCount = 1,

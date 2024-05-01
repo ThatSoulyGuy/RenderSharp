@@ -1,6 +1,7 @@
 ﻿using RenderStar.ECS;
 using SharpDX;
 using SharpDX.D3DCompiler;
+using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using System.Runtime.InteropServices;
@@ -67,6 +68,8 @@ namespace RenderStar.Render
     [StructLayout(LayoutKind.Sequential, Pack = 16)]
     public struct DefaultBufferType
     {
+        public Matrix ProjectionMatrix;
+        public Matrix ViewMatrix;
         public Matrix ModelMatrix;
     }
 
@@ -159,8 +162,11 @@ namespace RenderStar.Render
             GameObject.GetComponent<Shader>().UpdateConstantBuffer(name, data);
         }
 
-        public override void Render()
+        public override void Render(Camera camera)
         {
+            if (camera == null)
+                return;
+
             GameObject.GetComponent<Shader>().Use();
 
             Renderer.Context.InputAssembler.InputLayout = InputLayout;
@@ -169,8 +175,12 @@ namespace RenderStar.Render
 
             Renderer.Context.InputAssembler.SetIndexBuffer(IndexBuffer, Format.R32_UInt, 0);
 
+            Renderer.Context.InputAssembler.PrimitiveTopology = PrimitiveTopology.TriangleList;
+
             UpdateConstantBuffer<DefaultBufferType>("MatrixBuffer", new()
             {
+                ProjectionMatrix = Matrix.Transpose(camera.ProjectionMatrix),
+                ViewMatrix = Matrix.Transpose(camera.ViewMatrix),
                 ModelMatrix = Matrix.Transpose(Transform.WorldMatrix)
             });
 
