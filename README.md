@@ -13,7 +13,7 @@ reference the engine DLL in your mod projects, and create your own DLL which
 will then go into the `CoreMods` folder, and be loaded by the game
 engine. Alone, the game engine will do nothing, however with a mod
 DLL, you can add anything to the game engine, and use the game 
-engines various low-level features to create meshes, gameplay, and
+engine's various low-level features to create meshes, gameplay, and
 putting it all together you can make a game!
 
 
