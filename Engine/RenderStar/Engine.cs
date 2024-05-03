@@ -106,7 +106,6 @@ namespace RenderStar
         public static void Update()
         {
             InputManager.Update();
-            GameObjectManager.Update();
         }
 
         public static void Render()

@@ -115,10 +115,8 @@ namespace RenderStar.Math
             worldMatrix = scaleMatrix * rotationMatrix * translationMatrix;
 
             if (ParentTransform != null)
-            {
                 worldMatrix *= ParentTransform.WorldMatrix;
             }
-        }
 
         private void WrapAngles()
         {

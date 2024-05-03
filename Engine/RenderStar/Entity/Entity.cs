@@ -1,5 +1,4 @@
 ﻿using RenderStar.ECS;
-using SharpDX;
 
 namespace RenderStar.Entity
 {
