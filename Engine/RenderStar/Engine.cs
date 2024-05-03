@@ -97,9 +97,6 @@ namespace RenderStar
 
         public static void Initialize()
         {
-            Square.AddComponent(ShaderManager.Instance.Get("default"));
-            Square.AddComponent(TextureManager.Instance.Get("brick"));
-            Square.AddComponent(Mesh.Create([], []));
             Square.GetComponent<Mesh>().GenerateSquare();
             Square.GetComponent<Mesh>().Generate(TextureFilter.MinMagMipPoint);
 
