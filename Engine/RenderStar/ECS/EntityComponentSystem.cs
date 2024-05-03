@@ -15,7 +15,7 @@ namespace RenderStar.ECS
 
         private Dictionary<Type, Component> Components { get; } = [];
 
-        public void AddComponent(Component component)
+        public Component AddComponent(Component component)
         {
             Type type = component.GetType();
             List<RequireComponentAttribute> requiredComponents = type.GetCustomAttributes(typeof(RequireComponentAttribute), true).Cast<RequireComponentAttribute>().ToList();
@@ -29,6 +29,8 @@ namespace RenderStar.ECS
             Components[type] = component;
             component.GameObject = this;
             component.Initialize();
+
+            return component;
         }
 
         public bool HasComponent(Type type)

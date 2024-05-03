@@ -41,17 +41,17 @@ namespace RenderStar.Math
 
         public Vector3 Forward
         {
-            get => Vector3.TransformNormal(new Vector3(0, 0, 1), WorldMatrix);
+            get => Vector3.TransformNormal(new(0, 0, 1), WorldMatrix);
         }
 
         public Vector3 Right
         {
-            get => Vector3.TransformNormal(new Vector3(1, 0, 0), WorldMatrix);
+            get => Vector3.TransformNormal(new(1, 0, 0), WorldMatrix);
         }
 
         public Vector3 Up
         {
-            get => Vector3.TransformNormal(new Vector3(0, 1, 0), WorldMatrix);
+            get => Vector3.TransformNormal(new(0, 1, 0), WorldMatrix);
         }
 
         public Matrix WorldMatrix
@@ -104,19 +104,19 @@ namespace RenderStar.Math
 
         private void RecalculateWorldMatrix()
         {
-            var rotationMatrix = Matrix.RotationYawPitchRoll(
+            Matrix rotationMatrix = Matrix.RotationYawPitchRoll(
                 MathHelper.DegreesToRadians(LocalRotation.Y),
                 MathHelper.DegreesToRadians(LocalRotation.X),
                 MathHelper.DegreesToRadians(LocalRotation.Z));
 
-            var scaleMatrix = Matrix.Scaling(LocalScale);
-            var translationMatrix = Matrix.Translation(LocalPosition);
+            Matrix scaleMatrix = Matrix.Scaling(LocalScale);
+            Matrix translationMatrix = Matrix.Translation(LocalPosition);
 
             worldMatrix = scaleMatrix * rotationMatrix * translationMatrix;
 
             if (ParentTransform != null)
                 worldMatrix *= ParentTransform.WorldMatrix;
-            }
+        }
 
         private void WrapAngles()
         {

@@ -9,23 +9,29 @@ namespace RenderStar
 {
     public class EntityPlayer : Entity.Entity
     {
+        public Camera Camera { get; private set; } = null!;
+
         private Queue<Vector2> MouseDeltaBuffer { get; } = [];
         private const int BufferLength = 5;
 
-        public override EntityRegistration Registration => EntityRegistration.Create("entity_player", 100, 5.0f);
+        public override EntityRegistration Registration => EntityRegistration.Create("entity_player", 100, 0.1f);
 
         public override void Initialize()
         {
+            base.Initialize();
+
             GameObject.AddChild(GameObjectManager.Create("Camera"));
-            GameObject.Children[0].AddComponent(Camera.Create());
+            Camera = (Camera)GameObject.Children[0].AddComponent(Camera.Create());
 
             InputManager.SetCursorMode(true);
 
-            Renderer.RenderCamera = GameObject.Children[0].GetComponent<Camera>();
+            Renderer.RenderCamera = Camera;
         }
 
         public override void Update()
         {
+            base.Update();
+
             UpdateMouselook();
             UpdateMovement();
         }
@@ -43,7 +49,7 @@ namespace RenderStar
             float yawChange = averageDelta.X * sensitivity * MathF.PI / 180;
             float pitchChange = averageDelta.Y * sensitivity * MathF.PI / 180;
 
-            Vector3 currentRotation = GameObject.Children[0].Transform.LocalRotation;
+            Vector3 currentRotation = Camera.Transform.LocalRotation;
 
             currentRotation.Y += yawChange;
             currentRotation.X += pitchChange;
@@ -51,7 +57,7 @@ namespace RenderStar
             float pitchLimit = 89.9f;
             currentRotation.X = System.Math.Clamp(currentRotation.X, -pitchLimit, pitchLimit);
 
-            GameObject.Children[0].Transform.LocalRotation = currentRotation;
+            Camera.Transform.LocalRotation = currentRotation;
         }
 
         private void UpdateMovement()
@@ -59,16 +65,16 @@ namespace RenderStar
             Vector3 movementVector = Vector3.Zero;
 
             if (InputManager.GetKeyHeld(Keys.W, KeyState.Pressed))
-                movementVector += Transform.Forward * MovementSpeed;
+                movementVector += Camera.Transform.Forward * MovementSpeed;
 
             if (InputManager.GetKeyHeld(Keys.S, KeyState.Pressed))
-                movementVector -= Transform.Forward * MovementSpeed;
+                movementVector -= Camera.Transform.Forward * MovementSpeed;
 
             if (InputManager.GetKeyHeld(Keys.A, KeyState.Pressed))
-                movementVector -= Transform.Right * MovementSpeed;
+                movementVector -= Camera.Transform.Right * MovementSpeed;
 
             if (InputManager.GetKeyHeld(Keys.D, KeyState.Pressed))
-                movementVector += Transform.Right * MovementSpeed;
+                movementVector += Camera.Transform.Right * MovementSpeed;
 
             Transform.LocalPosition += movementVector;
         }
@@ -105,6 +111,7 @@ namespace RenderStar
 
         public static void Update()
         {
+            GameObjectManager.Update();
             InputManager.Update();
         }
 
