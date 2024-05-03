@@ -2,6 +2,7 @@
 using RenderStar.ECS;
 using RenderStar.Entity;
 using RenderStar.Math;
+using RenderStar.Mod;
 using RenderStar.Render;
 using SharpDX;
 
@@ -82,7 +83,7 @@ namespace RenderStar
 
     public static class Engine
     {
-        public static GameObject Square { get; } = GameObjectManager.Create("Square");
+        public static GameObject Square { get; } = Mesh.CreateGameObject("Square", "default", "brick", [], []);
         public static GameObject Player { get; } = GameObjectManager.Create("Player");
 
         public static void PreInitialize(Form form)
@@ -93,6 +94,8 @@ namespace RenderStar
             TextureManager.Instance.Register(Texture.Create("brick", "Texture/Brick.png"));
 
             InputManager.Initialize(form);
+
+            ModManager.PreInitialize();
         }
 
         public static void Initialize()
@@ -104,10 +107,14 @@ namespace RenderStar
             Player.Transform.LocalPosition = new(0.0f, 0.0f, -5.0f);
 
             Renderer.RenderCamera = Player.Children[0].GetComponent<Camera>();
+
+            ModManager.Initialize();
         }
 
         public static void Update()
         {
+            ModManager.Update();
+
             GameObjectManager.Update();
             InputManager.Update();
         }

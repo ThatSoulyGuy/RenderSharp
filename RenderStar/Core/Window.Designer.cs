@@ -36,7 +36,8 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
             Name = "Window";
-            Text = "RenderStar* 0.1.2";
+            Text = "RenderStar* 0.1.5";
+            Load += Window_Load;
             ResumeLayout(false);
         }
 

@@ -205,6 +205,19 @@ namespace RenderStar.Render
 
         private Mesh() { }
 
+        public static GameObject CreateGameObject(string name, string shader, string texture, List<Vertex> vertices, List<uint> indices)
+        {
+            GameObject gameObject = GameObjectManager.Create(name);
+
+            gameObject.AddComponent(ShaderManager.Instance.Get(shader));
+            gameObject.AddComponent(TextureManager.Instance.Get(texture));
+            gameObject.AddComponent(Create(vertices, indices));
+            gameObject.GetComponent<Mesh>().GenerateSquare();
+            gameObject.GetComponent<Mesh>().Generate(TextureFilter.MinMagMipPoint);
+
+            return gameObject;
+        }
+
         public static Mesh Create(List<Vertex> vertices, List<uint> indices)
         {
             return new()

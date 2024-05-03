@@ -49,5 +49,10 @@ namespace RenderStar
 
             RenderStarEngine.EngineLoader.CallMethod("RenderStar.Engine", "CleanUp");
         }
+
+        private void Window_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
