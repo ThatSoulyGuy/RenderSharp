@@ -95,6 +95,9 @@ namespace RenderStar
 
             InputManager.Initialize(form);
 
+            ModManager.LoadFrom("CoreMods/");
+            ModManager.LoadFrom("Mods/");
+
             ModManager.PreInitialize();
         }
 
