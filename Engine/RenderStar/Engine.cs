@@ -12,7 +12,7 @@ namespace RenderStar
             Renderer.Initialize(form);
             
             ShaderManager.Instance.Register(Shader.Create("default", "Shader/Default"));
-
+            
             InputManager.Initialize(form);
 
             ModManager.LoadFrom("CoreMods/");
