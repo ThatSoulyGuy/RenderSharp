@@ -1,4 +1,6 @@
 ﻿using RenderStar.ECS;
+using RenderStar.Util;
+using SharpDX;
 
 namespace RenderStar.Entity
 {
@@ -41,6 +43,19 @@ namespace RenderStar.Entity
             MaxHealth = Registration.MaxHealth;
             Health = MaxHealth;
             MovementSpeed = Registration.MovementSpeed;
+        }
+
+        public static GameObject CreateGameObject<T>(Vector3 position, Vector3 rotation) where T : Entity, new()
+        {
+            Random random = new();
+            Entity entity = Create<T>();
+
+            GameObject gameObject = GameObjectManager.Create(Hash.Generate(entity.RegistryName + random.NextDouble()));
+            gameObject.Transform.LocalPosition = position;
+            gameObject.Transform.LocalRotation = rotation;
+            gameObject.AddComponent(entity);
+
+            return gameObject;
         }
 
         public static T Create<T>() where T : Entity, new()
