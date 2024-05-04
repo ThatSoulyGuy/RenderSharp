@@ -12,7 +12,6 @@ namespace RenderStar
             Renderer.Initialize(form);
             
             ShaderManager.Instance.Register(Shader.Create("default", "Shader/Default"));
-            TextureManager.Instance.Register(Texture.Create("brick", "Texture/Brick.png"));
 
             InputManager.Initialize(form);
 
