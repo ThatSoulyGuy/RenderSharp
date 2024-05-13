@@ -1,9 +1,8 @@
-**What is this?**
-
+# What is this?
 This is a game engine, what did you think it is?
 
 
-**How does it work?**
+# How does it work?
 
 Well, the way this game engine is going to work is that it is going
 to be split in two, the host application and the game engine DLL.
@@ -17,11 +16,11 @@ engine's various low-level features to create meshes, gameplay, and
 putting it all together you can make a game!
 
 
-**Why should I care?**
+# Why should I care?
 
 You shouldn't.
 
 
-**How does this benefit me?**
+# How does this benefit me?
 
-it gives you a platform to make a game.
+It gives you a platform to make a game.
